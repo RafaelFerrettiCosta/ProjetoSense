@@ -36,6 +36,7 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
     api
       .get("/transactions")
       .then((response) => setTransactions(response.data.transactions));
+    localStorage.setItem("transações", JSON.stringify(transactions));
   }, []);
 
   async function createNewTransaction(transactionInput: TransactionInput) {
@@ -45,6 +46,7 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
     });
     const { transaction } = response.data;
     setTransactions([...transactions, transaction]);
+    localStorage.setItem("transações", JSON.stringify(transactions));
   }
 
   return (
