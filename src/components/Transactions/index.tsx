@@ -32,6 +32,11 @@ export function Transactions() {
                   new Date(transaction.createdAt),
                 )}
               </td>
+              <td>
+                <button /*onClick={onOpenEditModal}*/>
+                  <p>...</p>
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>

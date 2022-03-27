@@ -34,6 +34,18 @@ export const Container = styled.div`
       &.saida {
         color: var(--red);
       }
+
+      button {
+        width: 100%;
+        background-color: transparent;
+        border: 0;
+
+        p {
+          font-size: 2rem;
+          margin-top: -1rem;
+          opacity: 40%;
+        }
+      }
     }
   }
 `;
