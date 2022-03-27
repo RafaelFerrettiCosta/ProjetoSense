@@ -2,8 +2,6 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { createServer, Model } from "miragejs";
 import { App } from "./App";
-import { type } from "os";
-import { request } from "http";
 
 createServer({
   models: {
@@ -52,8 +50,7 @@ createServer({
     this.namespace = "api";
 
     this.get("/transactions", (schema, request) => {
-      console.log(request.queryParams);
-      return this.schema.all("transaction");
+      return schema.db.transactions.where({...request.queryParams});
     });
 
     this.post("/transactions", (schema, request) => {
@@ -67,5 +64,5 @@ ReactDOM.render(
   <React.StrictMode>
     <App />
   </React.StrictMode>,
-  document.getElementById("root"),
+  document.getElementById("root")
 );

@@ -16,6 +16,10 @@ interface Transaction {
   createdAt: string;
 }
 
+interface Filters {
+  type?: string;
+}
+
 type TransactionInput = Omit<Transaction, "id" | "createdAt">;
 
 interface TransactionProviderProps {
@@ -25,18 +29,16 @@ interface TransactionProviderProps {
 interface TransactionsContextData {
   transactions: Transaction[];
   createNewTransaction: (transaction: TransactionInput) => Promise<void>;
+  listTransactions: (filters: Filters) => Promise<void>;
 }
 const TransactionsContext = createContext<TransactionsContextData>(
-  {} as TransactionsContextData,
+  {} as TransactionsContextData
 );
 
 export function TransactionsProvider({ children }: TransactionProviderProps) {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   useEffect(() => {
-    api
-      .get("/transactions")
-      .then((response) => setTransactions(response.data.transactions));
-    localStorage.setItem("transações", JSON.stringify(transactions));
+    listTransactions();
   }, []);
 
   async function createNewTransaction(transactionInput: TransactionInput) {
@@ -49,9 +51,19 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
     localStorage.setItem("transações", JSON.stringify(transactions));
   }
 
+  async function listTransactions(filters?: Filters) {
+    let url = "/transactions";
+    const queryString = new URLSearchParams({ ...filters }).toString();
+
+    if (queryString) url += `?${queryString}`;
+
+    await api.get(url).then((response) => setTransactions(response.data));
+    localStorage.setItem("transações", JSON.stringify(transactions));
+  }
+
   return (
     <TransactionsContext.Provider
-      value={{ transactions, createNewTransaction }}
+      value={{ transactions, createNewTransaction, listTransactions }}
     >
       {children}
     </TransactionsContext.Provider>
