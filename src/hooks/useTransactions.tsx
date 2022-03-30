@@ -29,10 +29,11 @@ interface TransactionProviderProps {
 interface TransactionsContextData {
   transactions: Transaction[];
   createNewTransaction: (transaction: TransactionInput) => Promise<void>;
+  editTransaction: (transaction: TransactionInput) => Promise<void>;
   listTransactions: (filters: Filters) => Promise<void>;
 }
 const TransactionsContext = createContext<TransactionsContextData>(
-  {} as TransactionsContextData
+  {} as TransactionsContextData,
 );
 
 export function TransactionsProvider({ children }: TransactionProviderProps) {
@@ -51,6 +52,15 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
     localStorage.setItem("transações", JSON.stringify(transactions));
   }
 
+  async function editTransaction(transactionEdit: TransactionInput) {
+    const response = await api.put("/transactions", {
+      ...transactionEdit,
+      createdAt: new Date(),
+    });
+    const { transaction } = response.data;
+    setTransactions([...transactions, transaction]);
+  }
+
   async function listTransactions(filters?: Filters) {
     let url = "/transactions";
     const queryString = new URLSearchParams({ ...filters }).toString();
@@ -63,7 +73,12 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
 
   return (
     <TransactionsContext.Provider
-      value={{ transactions, createNewTransaction, listTransactions }}
+      value={{
+        transactions,
+        createNewTransaction,
+        editTransaction,
+        listTransactions,
+      }}
     >
       {children}
     </TransactionsContext.Provider>

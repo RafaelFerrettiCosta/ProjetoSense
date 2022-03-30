@@ -1,7 +1,11 @@
 import { useTransactions } from "../../hooks/useTransactions";
 import { Container } from "./styles";
 
-export function Transactions() {
+interface TransactionProps {
+  onOpenEditTransactionModal: () => void;
+}
+
+export function Transactions({ onOpenEditTransactionModal }: TransactionProps) {
   const { transactions } = useTransactions();
 
   return (
@@ -33,7 +37,7 @@ export function Transactions() {
                 )}
               </td>
               <td>
-                <button /*onClick={onOpenEditModal}*/>
+                <button type="button" onClick={onOpenEditTransactionModal}>
                   <p>...</p>
                 </button>
               </td>
