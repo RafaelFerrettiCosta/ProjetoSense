@@ -2,7 +2,7 @@ import { useTransactions } from "../../hooks/useTransactions";
 import { Container } from "./styles";
 
 interface TransactionProps {
-  onOpenEditTransactionModal: () => void;
+  onOpenEditTransactionModal: (id: number) => void;
 }
 
 export function Transactions({ onOpenEditTransactionModal }: TransactionProps) {
@@ -37,7 +37,7 @@ export function Transactions({ onOpenEditTransactionModal }: TransactionProps) {
                 )}
               </td>
               <td>
-                <button type="button" onClick={onOpenEditTransactionModal}>
+                <button type="button" onClick={() => onOpenEditTransactionModal(transaction.id)}>
                   <p>...</p>
                 </button>
               </td>

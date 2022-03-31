@@ -20,7 +20,8 @@ interface Filters {
   type?: string;
 }
 
-type TransactionInput = Omit<Transaction, "id" | "createdAt">;
+type CreateTransactionInput = Omit<Transaction, "id" | "createdAt">;
+type EditTransactionInput = Omit<Transaction, "createdAt">;
 
 interface TransactionProviderProps {
   children: ReactNode;
@@ -28,12 +29,12 @@ interface TransactionProviderProps {
 
 interface TransactionsContextData {
   transactions: Transaction[];
-  createNewTransaction: (transaction: TransactionInput) => Promise<void>;
-  editTransaction: (transaction: TransactionInput) => Promise<void>;
+  createNewTransaction: (transaction: CreateTransactionInput) => Promise<void>;
+  editTransaction: (transaction: EditTransactionInput) => Promise<void>;
   listTransactions: (filters: Filters) => Promise<void>;
 }
 const TransactionsContext = createContext<TransactionsContextData>(
-  {} as TransactionsContextData,
+  {} as TransactionsContextData
 );
 
 export function TransactionsProvider({ children }: TransactionProviderProps) {
@@ -42,7 +43,9 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
     listTransactions();
   }, []);
 
-  async function createNewTransaction(transactionInput: TransactionInput) {
+  async function createNewTransaction(
+    transactionInput: CreateTransactionInput
+  ) {
     const response = await api.post("/transactions", {
       ...transactionInput,
       createdAt: new Date(),
@@ -52,20 +55,21 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
     localStorage.setItem("transações", JSON.stringify(transactions));
   }
 
-  async function editTransaction(transactionEdit: TransactionInput) {
+  async function editTransaction(transactionEdit: EditTransactionInput) {
     const response = await api.put("/transactions", {
       ...transactionEdit,
-      createdAt: new Date(),
     });
-    const { transaction } = response.data;
-    setTransactions([...transactions, transaction]);
+    const transactions = response.data;
+    setTransactions(transactions);
   }
 
   async function listTransactions(filters?: Filters) {
     let url = "/transactions";
-    const queryString = new URLSearchParams({ ...filters }).toString();
 
-    if (queryString) url += `?${queryString}`;
+    if (filters) {
+      const queryString = new URLSearchParams({ ...filters }).toString();
+      if (queryString) url += `?${queryString}`;
+    }
 
     await api.get(url).then((response) => setTransactions(response.data));
     localStorage.setItem("transações", JSON.stringify(transactions));

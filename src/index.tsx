@@ -50,12 +50,19 @@ createServer({
     this.namespace = "api";
 
     this.get("/transactions", (schema, request) => {
-      return schema.db.transactions.where({...request.queryParams});
+      return schema.db.transactions.where({ ...request.queryParams });
     });
 
     this.post("/transactions", (schema, request) => {
       const data = JSON.parse(request.requestBody);
       return schema.create("transaction", data);
+    });
+
+    this.put("/transactions", (schema, request) => {
+      const data = JSON.parse(request.requestBody);
+      // const transaction = schema.db.transactions.find(data.id)
+      // transaction.update({value: data.value});
+      return schema.db.transactions;
     });
   },
 });

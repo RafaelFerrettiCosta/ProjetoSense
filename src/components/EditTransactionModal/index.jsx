@@ -3,20 +3,21 @@ import { Container, RadioBox, TransactionTypeContainer } from "./styles";
 import close from "../../assets/close.svg";
 import entrada from "../../assets/entradas.svg";
 import saida from "../../assets/saidas.svg";
-import { useState, FormEvent, useContext } from "react";
-import { api } from "../../services/api";
+import { useState, FormEvent, useEffect } from "react";
 import { useTransactions } from "../../hooks/useTransactions";
 
 interface EditTransactionModalProps {
   isOpen: boolean;
   onRequestClose: () => void;
+  id: number;
 }
 
 export function EditTransactionModal({
-  isOPen,
+  isOpen,
   onRequestClose,
+  id,
 }: EditTransactionModalProps) {
-  const { editTransaction } = useTransactions();
+  const { editTransaction, transactions } = useTransactions();
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const [value, setValue] = useState(0);
@@ -26,6 +27,7 @@ export function EditTransactionModal({
     event.preventDefault();
 
     await editTransaction({
+      id,
       title,
       value,
       category,
@@ -39,9 +41,19 @@ export function EditTransactionModal({
     onRequestClose();
   }
 
+  useEffect(() => {
+    if (id) {
+      const transaction = transactions.find((t) => t.id == id);
+      setTitle(transaction.title);
+      setValue(transaction.value);
+      setCategory(transaction.category);
+      setType(transaction.type);
+    }
+  }, [isOpen]);
+
   return (
     <Modal
-      isOPen={isOPen}
+      isOpen={isOpen}
       onRequestClose={onRequestClose}
       overlayClassName="react-modal-overlay"
       className="react-modal-content"

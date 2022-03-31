@@ -7,8 +7,10 @@ import { Container } from "./styles";
 
 export function Dashboard() {
   const [isEditTransactionOpen, setIsEditTransactionOpen] = useState(false);
+  const [idTransaction, setIdTransaction] = useState(0);
 
-  function openEditTransactionModal() {
+  function openEditTransactionModal(id: number) {
+    setIdTransaction(id)
     setIsEditTransactionOpen(true);
   }
 
@@ -24,6 +26,7 @@ export function Dashboard() {
       <EditTransactionModal
         isOpen={isEditTransactionOpen}
         onRequestClose={closeEditTransactionModal}
+        id={idTransaction}
       />
     </Container>
   );
